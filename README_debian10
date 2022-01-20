@@ -1,0 +1,104 @@
+## Tested and working on clean install of Debian 10 usin MariaDB Server
+
+**SOURCES**
+
+Git Repo: https://github.com/juce/fiveserver
+Fiveserver: https://sites.google.com/site/fiveservercom/home
+
+--------------------------------------------------------------------
+
+
+**UPDATE REPO AND INSTALL PACKAGES FOR FIVESERVER**
+
+sudo apt -y update
+
+sudo apt  install libmariadb-dev-compat libmariadb-dev python3 python3-venv python3-dev gcc make python3-pip rustc libffi-dev libssl-dev build-essential python-dev
+
+sudo pip3 install --upgrade pip setuptools wheel numpy
+
+
+**CREATE SOURCE DIRECTORY, CLONE GIT REPO AND INSTALL FIVESERVER**
+
+apt install git
+cd /opt
+git clone https://github.com/juce/fiveserver.git
+cd fiveserver
+make install
+
+
+**INSTALL AND CONFIGURE MARIADB SERVER**
+
+sudo apt install mariadb-server
+sudo mysql_secure_installation
+
+Enter current password for root (enter for none): pes6dbPW
+
+Change the root password? [Y/n] n
+
+Remove anonymous users? [Y/n] Y
+
+Disallow root login remotely? [Y/n] Y
+
+Remove test database and access to it? [Y/n] Y
+
+Reload privilege tables now? [Y/n] Y
+
+
+
+**CONFIGURE MYSQL SO YOU CAN LOGIN AS ROOT USER WIHTOUT PASSWORD (OPTIONAL)**   
+
+vi ~/.my.cnf  {{Then press i to instert and paste the following 3 lines}}
+
+
+[client]
+user=root
+password="pes6dbPW"
+
+
+To quit, press Esc, Esc and type "wq!" [without the quotes]
+
+Now you can login to mysql without a password (as long as you're logged in as root user):
+
+
+
+**LOGIN TO MYSQL AND CREATE THE DATABASE**
+
+mysql  {to login to MySQL server.  Then create the DB and import the sixserver DB with the following commands inside MySQL CLI]
+
+create database sixserver;
+create user 'sixserver'@'%' identified by 'proevo';
+grant select, insert, update on sixserver.* to 'sixserver'@'%';
+use sixserver;
+source /opt/fiveserver/sql/schema6.sql
+
+Make sure all is good and you get rows imported successfully.  If not, read again cos you've clearly fucked something.  If all is good, you can quit MYSQL:
+
+quit;
+
+
+**SET THE ADMIN USER AND PASSWORD**
+
+vi /opt/fiveserver/etc/conf {{Then press i to insert and edit the User and Password as you see fit}}
+
+AdminUser: fives
+AdminPassword: fives
+
+To quit, press Esc, Esc and type "wq!" (without the quotes)
+
+
+
+**NOW YOU CAN RUN FIVESERVER**
+
+/opt/fiveserver/service.sh sixserver start
+
+
+**URLS**
+
+Server:
+http://<your-ip>:8190/
+
+Admin:
+https://<your_ip>:8191/
+
+User: fives
+Password: fives
