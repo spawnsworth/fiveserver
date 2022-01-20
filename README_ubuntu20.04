@@ -1,0 +1,105 @@
+# Tested and working on Ubuntu 20.04 with MySQL Server
+
+**SOURCES**
+
+Git Repo: https://github.com/juce/fiveserver
+Fiveserver: https://sites.google.com/site/fiveservercom/home
+
+
+**UPDATE REPO AND INSTALL PACKAGES FOR FIVESERVER**
+
+sudo apt -y update
+sudo apt  install libmysqlclient-dev python3 python3-venv python3-dev gcc make
+
+
+
+**CREATE SOURCE DIRECTORY, CLONE GIT REPO AND INSTALL FIVESERVER**
+
+apt install git
+cd /opt
+git clone https://github.com/juce/fiveserver.git
+cd fiveserver
+make install
+
+
+
+**INSTALL AND CONFIGURE MYSQL SERVER**
+
+sudo apt install mysql-server
+sudo mysql_secure_installation
+
+Would you like to setup VALIDATE PASSWORD component? : {enter}
+
+New password: pes5dbPW
+
+Remove anonymous users? (Press y|Y for Yes, any other key for No) : {enter}
+
+Disallow root login remotely? (Press y|Y for Yes, any other key for No) : {y}
+
+Remove test database and access to it? (Press y|Y for Yes, any other key for No) {y}
+
+Reload privilege tables now? (Press y|Y for Yes, any other key for No) : {Y}
+
+All done!
+
+
+
+**CONFIGURE MYSQL SO YOU CAN LOGIN AS ROOT USER WIHTOUT PASSWORD (OPTIONAL)**
+
+vi ~/.my.cnf  {{Then press i to instert and paste the following 3 lines}}
+
+
+[client]
+user=root
+password="pes6dbPW"
+
+
+To quit, press Esc, Esc and type "wq!" [without the quotes]
+
+Now you can login to mysql without a password (as long as you are logged in as root user):
+
+
+
+**LOGIN TO MYSQL AND CREATE THE DATABASE**
+
+mysql  {to login to MySQL server.  Then create the DB and import the sixserver DB with the following commands inside MySQL CLI]
+
+create database sixserver;
+create user 'sixserver'@'%' identified by 'proevo';
+grant select, insert, update on sixserver.* to 'sixserver'@'%';
+use sixserver;
+source /opt/fiveserver/sql/schema6.sql
+
+Make sure all is good and you get rows imported successfully.  If not, read again cos you've clearly fucked something.  If all is good, you can quit MYSQL:
+
+quit;
+
+
+
+**SET THE ADMIN USER AND PASSWORD**
+
+vi /opt/fiveserver/etc/conf {{Then press i to insert and edit the User and Password as you see fit}}
+
+AdminUser: fives
+AdminPassword: fives
+
+To quit, press Esc, Esc and type "wq!" (without the quotes)
+
+
+
+**NOW YOU CAN RUN FIVESERVER**
+
+/opt/fiveserver/service.sh sixserver start
+
+
+**URLS**
+
+Server:
+http://pes6.co.uk:8190/
+
+Admin:
+https://pes6.co.uk:8191/
+
+User: fives
+Password: fives
+
